@@ -1,0 +1,25 @@
+[package]
+name = "xorpio"
+version = "0.1.0-alpha.1"
+edition = "2024"
+rust-version = "1.97"
+description = "Zero-dependency, libc-free, allocation-free Linux syscalls: epoll, io_uring, TCP, files, mounts, namespaces (x86_64, aarch64)"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/xorps/xorpio"
+keywords = ["epoll", "no_std", "syscall", "linux", "reactor"]
+categories = ["no-std", "network-programming", "os::linux-apis"]
+include = ["/src", "/README.md", "/LICENSE-MIT", "/LICENSE-APACHE"]
+
+[dependencies]
+
+[profile.release]
+panic = "abort"
+
+[profile.release-example]
+inherits = "release"
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+strip = true
+debug = false

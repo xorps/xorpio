@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    # Tags run this through release.yml instead.
+    branches: ["**"]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # rustup installs the toolchain pinned in rust-toolchain.toml.
+      - run: rustup toolchain install
+      - run: make check
+
+  # The rust-version in Cargo.toml.
+  msrv:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.97 --profile minimal --target x86_64-unknown-none,aarch64-unknown-none
+      - run: cargo +1.97 check --lib --target x86_64-unknown-none
+      - run: cargo +1.97 check --lib --target aarch64-unknown-none
+
+  # Integration tests on native amd64 and arm64 machines, where clone3 and
+  # io_uring are real (under qemu-user they are skipped).
+  test:
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install
+      - run: cargo test --locked --tests
