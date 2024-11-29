@@ -1,0 +1,11 @@
+{
+  "name": "xorpio",
+  "image": "rust:1.99.1-bookworm",
+  "postCreateCommand": "rustup show active-toolchain || rustup toolchain install",
+  "customizations": {
+    "vscode": {
+      "extensions": ["rust-lang.rust-analyzer"]
+    }
+  },
+  "forwardPorts": [8080]
+}

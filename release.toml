@@ -1,0 +1,6 @@
+# cargo-release: `cargo release alpha --execute` bumps the version, commits,
+# tags v<version> and pushes; the tag makes .github/workflows/release.yml
+# publish to crates.io.
+publish = false
+pre-release-commit-message = "Release {{version}}"
+tag-message = "Release {{version}}"

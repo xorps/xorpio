@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1
+# Builds an example into a scratch image. The toolchain version and targets
+# come from rust-toolchain.toml; the build always runs natively and
+# cross-compiles to the requested platform (no emulation needed).
+ARG RUST_VERSION=1.99.1
+
+FROM --platform=$BUILDPLATFORM docker.io/library/rust:${RUST_VERSION}-slim-bookworm AS builder
+ARG TARGETARCH
+ARG EXAMPLE=http
+ARG PROFILE=release-example
+WORKDIR /app
+RUN --mount=type=cache,target=/app/target \
+    --mount=type=bind,source=examples,target=examples \
+    --mount=type=bind,source=src,target=src \
+    --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
+    --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
+    --mount=type=bind,source=rust-toolchain.toml,target=rust-toolchain.toml \
+    case "$TARGETARCH" in \
+      amd64) target=x86_64-unknown-none ;; \
+      arm64) target=aarch64-unknown-none ;; \
+      *) echo "unsupported arch: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    cargo build --locked --example "$EXAMPLE" --profile "$PROFILE" --target "$target" && \
+    cp "target/$target/$PROFILE/examples/$EXAMPLE" /app/bin
+
+FROM scratch
+COPY --from=builder /app/bin /app
+USER 1001
+EXPOSE 8080
+ENTRYPOINT ["/app"]
