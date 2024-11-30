@@ -6,6 +6,7 @@ use xorpio::epoll::Epoll;
 fn run() -> Result<(), xorpio::Errno> {
     let ev = Epoll::new()?;
     let () = ev.close()?;
+    let _size = xorpio::io::write(xorpio::io::STDOUT, b"success!\n")?;
     Ok(())
 }
 
@@ -18,7 +19,10 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     let code = match run() {
         Ok(()) => 0,
-        Err(_) => 1,
+        Err(_) => {
+            let _ = xorpio::io::write(xorpio::io::STDERR, b"failed!\n");
+            1
+        }
     };
 
     xorpio::process::exit(code);

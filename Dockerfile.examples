@@ -11,6 +11,7 @@ ARG EXAMPLE
 ARG PROFILE
 ARG TARGET
 WORKDIR /app/src
+RUN rustup target add ${TARGET}
 RUN --mount=type=cache,target=/app/src/target \
     --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=bind,source=./examples,target=./examples \
@@ -20,7 +21,10 @@ RUN --mount=type=cache,target=/app/src/target \
     cargo build --locked --example ${EXAMPLE} --profile ${PROFILE} --target ${TARGET}
 WORKDIR /app
 RUN --mount=type=cache,target=/app/src/target \
-    cp /app/src/target/${TARGET}/${PROFILE}/examples/${EXAMPLE} app
+    cp /app/src/target/${TARGET}/${PROFILE}/examples/${EXAMPLE} app && \
+    strip app && \
+    file app && \
+    ls -lh app
 
 FROM ${RUNTIME_IMAGE}
 COPY --from=builder /app/app /app/app
