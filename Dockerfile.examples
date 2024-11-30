@@ -1,13 +1,15 @@
 # syntax=docker/dockerfile:1
 ARG RUST_VERSION=1.82.0
+ARG TARGET
 ARG EXAMPLE=basic
-ARG RUNTIME_IMAGE=gcr.io/distroless/cc-debian12:nonroot
-ARG PROFILE=release
+ARG RUNTIME_IMAGE=scratch
+ARG PROFILE=release-example
 ARG BUILDER_IMAGE=docker.io/library/rust:${RUST_VERSION}
 
 FROM ${BUILDER_IMAGE} AS builder
 ARG EXAMPLE
 ARG PROFILE
+ARG TARGET
 WORKDIR /app/src
 RUN --mount=type=cache,target=/app/src/target \
     --mount=type=cache,target=/usr/local/cargo/registry \
@@ -15,13 +17,13 @@ RUN --mount=type=cache,target=/app/src/target \
     --mount=type=bind,source=./src,target=./src \
     --mount=type=bind,source=./Cargo.toml,target=./Cargo.toml \
     --mount=type=bind,source=./Cargo.lock,target=./Cargo.lock \
-    cargo build --locked --example ${EXAMPLE} --profile ${PROFILE}
+    cargo build --locked --example ${EXAMPLE} --profile ${PROFILE} --target ${TARGET}
 WORKDIR /app
 RUN --mount=type=cache,target=/app/src/target \
-    cp /app/src/target/${PROFILE}/examples/${EXAMPLE} app
+    cp /app/src/target/${TARGET}/${PROFILE}/examples/${EXAMPLE} app
 
 FROM ${RUNTIME_IMAGE}
 COPY --from=builder /app/app /app/app
 WORKDIR /app
-USER nonroot
+USER 1001
 ENTRYPOINT [ "/app/app" ]

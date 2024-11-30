@@ -1,27 +1,24 @@
-#![cfg(all(
-    target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
-))]
+use syscalls::{syscall, Errno, Sysno};
 
-use crate::syscall;
-
-pub struct Epoll(syscall::c_int);
+pub struct Epoll(usize);
 
 impl Epoll {
-    pub fn new() -> Result<Self, i32> {
-        let fd = syscall::epoll_create1(0)?;
-        Ok(Self(fd))
+    /// Creates a new epoll context
+    pub fn new() -> Result<Self, Errno> {
+        let fd = unsafe { syscall!(Sysno::epoll_create1, 0) };
+        Ok(Self(fd?))
     }
 
-    pub fn close(self) -> Result<(), i32> {
+    /// Same as `Drop`. Allows you to inspect error code for `close`
+    pub fn close(self) -> Result<(), Errno> {
         let this = core::mem::ManuallyDrop::new(self);
-        Ok(syscall::close(this.0)?)
+        let res = unsafe { syscall!(Sysno::close, this.0) };
+        res.map(|_| ())
     }
 }
 
 impl Drop for Epoll {
     fn drop(&mut self) {
-        // ignore error
-        let _ = syscall::close(self.0);
+        let _ignore_err = unsafe { syscall!(Sysno::close, self.0) };
     }
 }

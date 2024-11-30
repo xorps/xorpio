@@ -1,4 +1,16 @@
 [package]
 name = "xorpio"
 edition = "2021"
+description = "no_std / libc-free bindings for Linux userspace IO"
+license = "MIT"
 version = "0.0.0"
+
+[dependencies]
+syscalls = { version = "0.6.18", default-features = false, features = ["all"] }
+
+[profile.release-example]
+inherits = "release"
+opt-level = 3
+lto = true
+panic = "abort"
+codegen-units = 1
