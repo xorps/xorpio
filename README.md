@@ -100,15 +100,13 @@ cargo build --profile release-example --example http --target aarch64-unknown-no
 
 ## Releasing
 
-```sh
-cargo release alpha --execute      # 0.1.0-alpha.1 -> 0.1.0-alpha.2
-cargo release release --execute    # 0.1.0-alpha.N -> 0.1.0
-```
-
-[cargo-release](https://github.com/crate-ci/cargo-release) bumps the
-version, commits, tags `v<version>` and pushes. The tag runs
-`.github/workflows/release.yml`, which runs CI and then publishes to
-crates.io with trusted publishing.
+[release-plz](https://release-plz.dev) runs on every push to `develop`
+(`.github/workflows/release.yml`). It keeps a release PR open that bumps the
+version (`0.1.0-alpha.1` to `0.1.0-alpha.2`, ...) and updates
+`CHANGELOG.md`. Merging that PR runs CI, publishes to crates.io with trusted
+publishing, tags `v<version>` and creates a GitHub release. To leave the
+alphas, set the version to `0.1.0` in the release PR, or run
+`release-plz set-version xorpio@0.1.0`.
 
 ## License
 
