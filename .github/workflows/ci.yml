@@ -2,8 +2,8 @@ name: CI
 
 on:
   push:
-    # release.yml runs this for develop.
-    branches-ignore: [develop]
+    # release.yml runs this for main.
+    branches-ignore: [main]
   pull_request:
   workflow_call:
 
