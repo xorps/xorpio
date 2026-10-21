@@ -27,13 +27,13 @@ jobs:
       # short-lived crates.io token; no secret is stored.
       id-token: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
       # rustup installs the toolchain pinned in rust-toolchain.toml.
       - run: rustup toolchain install
-      - uses: release-plz/action@8b5bf233ecb5779f63508db7cd050e948ee77cc2 # v0.5.144
+      - uses: release-plz/action@v0.5.144
         with:
           command: release
         env:
@@ -49,12 +49,12 @@ jobs:
       group: release-plz-${{ github.ref }}
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
       - run: rustup toolchain install
-      - uses: release-plz/action@8b5bf233ecb5779f63508db7cd050e948ee77cc2 # v0.5.144
+      - uses: release-plz/action@v0.5.144
         with:
           command: release-pr
         env:
