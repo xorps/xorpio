@@ -100,7 +100,7 @@ cargo build --profile release-example --example http --target aarch64-unknown-no
 
 ## Releasing
 
-[release-plz](https://release-plz.dev) runs on every push to `develop`
+[release-plz](https://release-plz.dev) runs on every push to `main`
 (`.github/workflows/release.yml`). It keeps a release PR open that bumps the
 version (`0.1.0-alpha.1` to `0.1.0-alpha.2`, ...) and updates
 `CHANGELOG.md`. Merging that PR runs CI, publishes to crates.io with trusted

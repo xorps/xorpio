@@ -5,7 +5,7 @@ name: Release
 # release. See release-plz.toml.
 on:
   push:
-    branches: [develop]
+    branches: [main]
 
 permissions:
   contents: read
