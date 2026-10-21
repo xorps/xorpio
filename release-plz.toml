@@ -1,0 +1,7 @@
+[workspace]
+# Publish when the release PR is merged, not on every push.
+release_always = false
+# Versions like 0.1.0-alpha.2 become GitHub pre-releases.
+git_release_type = "auto"
+# crates.io has only the 0.0.0 placeholder to compare the API against.
+semver_check = false

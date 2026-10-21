@@ -9,7 +9,7 @@ readme = "README.md"
 repository = "https://github.com/xorps/xorpio"
 keywords = ["epoll", "no_std", "syscall", "linux", "reactor"]
 categories = ["no-std", "network-programming", "os::linux-apis"]
-include = ["/src", "/README.md", "/LICENSE-MIT", "/LICENSE-APACHE"]
+include = ["/src", "/README.md", "/CHANGELOG.md", "/LICENSE-MIT", "/LICENSE-APACHE"]
 
 [dependencies]
 
